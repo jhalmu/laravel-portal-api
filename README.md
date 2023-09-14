@@ -1,11 +1,7 @@
 ## Laravel-Livewire-Filament blog & all
 
-#10.9.2023 
+#15.9.2023 
 
-Hyvä aloittaa sillä ettei eilinen pushaus ollutkaan mennyt. Ja miksi tuo nyt meni masteriksi kun se on vanhaa...
+Eipä tässä ole oikein tästä kirjoitettavaa. Teen tätä videoiden pohjalta, pala kerrallaan. Tokihan voisin repon vaan kopioida ja jatkaa sen muokkaamista, mutta jotenkin tuntuu että näin oppis enemmän...
 
-Teen tätä alkua juutuubista saamieni vinkkien mukaan kuten yleensä tähänkin asti. Uutena nyt tämä livewire jossa mukana kaikkea pientä kivaa valmiina niin kuin Profiilin muokkaus ja API tokeneineen. 
-
-Tuntuukin mukavan tutulta tämä Laravel touhu. Toivotaan että pystyy jatkamaan myös mäkin puolella. 
-
-No tämä oli tälläinen journaali, mukataan tätäkin kun mennään
+Miksi minä teen tätä wintoosalla? Ei meinaa sormet osua hakasulkeisiin ja muihin. Ja muutenkin taitaa olla ihan väärä näppis tämä. Ergonomia ei ole nyt kohdallaan ei. 
