@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model
 {
@@ -32,10 +32,13 @@ class Post extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function categories()
+
+    public function tags()
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Tag::class);
     }
+
+
 
     public function scopePublished($query)
     {
