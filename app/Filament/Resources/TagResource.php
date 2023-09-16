@@ -23,18 +23,27 @@ class TagResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    //protected static ?string $navigationGroup = 'Tag management';
+public static function getNavigationBadge(): ?string
+{
+return static::getModel()::count();
+}
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('title')
                 ->live()
+                ->dehydrateStateUsing(fn (string $state): string => ucwords($state))
                 ->required()->minLength(1)->maxLength(150)
                 ->afterStateUpdated(function (string $operation, $state, Set $set) {
                     if($operation === 'edit') return;
                     $set('slug', Str::slug($state));
                 }),
-                TextInput::make('slug')->required()->unique(ignoreRecord:true)->maxLength(150),
+                TextInput::make('slug')->required()
+                ->dehydrateStateUsing(fn (string $state): string => str_replace('c','csharp',$state))
+                ->unique(ignoreRecord:true)->maxLength(150),
                 TextInput::make('text_color')->nullable(),
                 TextInput::make('bg_color')->nullable(),
             ]);
@@ -65,7 +74,7 @@ class TagResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\PostsRelationManager::class,
         ];
     }
 

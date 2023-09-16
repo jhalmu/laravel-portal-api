@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Models\Tag;
-use Filament\Forms;
 use App\Models\Post;
 use Filament\Tables;
 use Filament\Forms\Set;
@@ -11,29 +9,20 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Resources\Resource;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
-use Filament\Pages\Actions\EditAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Filament\Tables\Columns\SelectColumn;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Columns\CheckboxColumn;
-use Filament\Tables\Actions\BulkActionGroup;
+use RelationManagers\PostsRelationManager;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\PostResource\Pages;
-use Filament\Tables\Actions\RestoreBulkAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\PostResource\Pages\EditPost;
-use App\Filament\Resources\PostResource\Pages\ListPosts;
-use App\Filament\Resources\PostResource\Pages\CreatePost;
 use App\Filament\Resources\PostResource\RelationManagers;
 
 class PostResource extends Resource
@@ -41,6 +30,14 @@ class PostResource extends Resource
     protected static ?string $model = Post::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-rectangle-stack';
+
+    //protected static ?string $navigationGroup = 'Post management';
+
+public static function getNavigationBadge(): ?string
+{
+return static::getModel()::count();
+}
 
     public static function form(Form $form): Form
     {
@@ -49,7 +46,7 @@ class PostResource extends Resource
                 Section::make('Main content')->schema(
                     [
                         TextInput::make('title')
-                            ->live()
+                            ->live(onBlur: true)
                             ->required()->minLength(1)->maxLength(150)
                             ->afterStateUpdated(function (string $operation, $state, Set $set) {
                                 if ($operation === 'edit')
@@ -69,9 +66,9 @@ class PostResource extends Resource
                         FileUpload::make('image')->image()->directory('posts/thumbnails'),
                         DateTimePicker::make('published_at')->nullable(),
                         Checkbox::make('featured'),
-
                         Select::make('user_id')
                         ->relationship('author', 'name')
+                        ->live(onBlur: true)
                         ->searchable()
                         ->required()
                          ->preload(),
@@ -97,10 +94,13 @@ class PostResource extends Resource
                 TextColumn::make('slug')->sortable()->searchable(),
                 TextColumn::make('author.name')->sortable()->searchable(),
                 TextColumn::make('published_at')->date()->sortable()->searchable(),
-                CheckboxColumn::make('featured'),
+                //CheckboxColumn::make('featured'),
+
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                Filter::make('is_featured'),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -117,7 +117,7 @@ class PostResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+           //
         ];
     }
 
