@@ -2,10 +2,20 @@
                 <div class="flex justify-between items-center border-b border-gray-100">
 
                     <div class="text-gray-600">
-                        @if ($search)
-                            Searching: <strong>{{ $search }}</strong>
+                        @if ($this->activeTag || $search)
+                            <button class="mr-3 text-xs gray-500" wire:click="clearFilters()">X</button>
                         @endif
-
+                        @if ($this->activeTag)
+                            <x-badge wire:navigate href="{{ route('posts.index', ['tag' => $this->activeTag->slug]) }}"
+                                :textColor="$this->activeTag->text_color" :bgColor="$this->activeTag->bg_color">
+                                {{ $this->activeTag->title }}
+                            </x-badge>
+                        @endif
+                        @if ($search)
+                            <span class="ml-2">
+                                containing : <strong>{{ $search }}</strong>
+                            </span>
+                        @endif
                     </div>
 
                     <div class="flex items-center space-x-4 font-light ">

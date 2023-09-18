@@ -2,28 +2,27 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\PostResource\Pages;
 use App\Models\Post;
-use Filament\Tables;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Resources\Resource;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Checkbox;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\CheckboxColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use RelationManagers\PostsRelationManager;
-use Filament\Forms\Components\DateTimePicker;
-use App\Filament\Resources\PostResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\PostResource\RelationManagers;
+use Illuminate\Support\Str;
 
 class PostResource extends Resource
 {
@@ -36,7 +35,7 @@ class PostResource extends Resource
 
 public static function getNavigationBadge(): ?string
 {
-return static::getModel()::count();
+    return static::getModel()::count();
 }
 
     public static function form(Form $form): Form
@@ -46,11 +45,14 @@ return static::getModel()::count();
                 Section::make('Main content')->schema(
                     [
                         TextInput::make('title')
-                            ->live(onBlur: true)
+                            ->live()
                             ->required()->minLength(1)->maxLength(150)
                             ->afterStateUpdated(function (string $operation, $state, Set $set) {
                                 if ($operation === 'edit')
+                                {
                                     return;
+                                }
+
                                 $set('slug', Str::slug($state));
                             }),
                         TextInput::make('slug')
@@ -66,9 +68,8 @@ return static::getModel()::count();
                         FileUpload::make('image')->image()->directory('posts/thumbnails'),
                         DateTimePicker::make('published_at')->nullable(),
                         Checkbox::make('featured'),
-                        Select::make('user_id')
+                        Select::make('author')
                         ->relationship('author', 'name')
-                        ->live(onBlur: true)
                         ->searchable()
                         ->required()
                          ->preload(),
@@ -93,13 +94,13 @@ return static::getModel()::count();
                 TextColumn::make('title')->sortable()->searchable(),
                 TextColumn::make('slug')->sortable()->searchable(),
                 TextColumn::make('author.name')->sortable()->searchable(),
-                TextColumn::make('published_at')->date()->sortable()->searchable(),
-                //CheckboxColumn::make('featured'),
+                TextColumn::make('published_at')->date('m.d.Y')->sortable()->searchable(),
+                CheckboxColumn::make('featured'),
 
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-                Filter::make('is_featured'),
+                Filter::make('featured'),
 
             ])
             ->actions([
